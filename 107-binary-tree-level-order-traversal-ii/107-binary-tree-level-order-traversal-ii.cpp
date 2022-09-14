@@ -11,21 +11,44 @@
  */
 class Solution {
 public:
-int levels(TreeNode* root){
-        if(!root) return 0;
-        return 1+max(levels(root->left), levels(root->right));
+    int maxDepth(TreeNode* root){
+        if(root==NULL) return 0;
+        int left=maxDepth(root->left);
+        int right=maxDepth(root->right); 
+        
+        if(left==0) return right+1;
+        else if(right==0) return left+1;
+        else
+        return max(left,right)+1;
     }
-    void helper(TreeNode* root, vector<vector<int>>&ans, int len, int depth){
-        if(!root) return;
-        ans[len-depth-1].push_back(root->val);
-        if(root->left)helper(root->left, ans, len, depth+1);
-        if(root->right)helper(root->right, ans, len , depth+1);
-    }
+    
     vector<vector<int>> levelOrderBottom(TreeNode* root) {
-        if(!root)return {};
-        int len=levels(root);
-        vector<vector<int>>ans(len);
-        helper(root,ans, len, 0);
+        
+        if(root==NULL) return {};
+        
+        int level=maxDepth(root);
+        
+        queue<TreeNode*>q;
+        q.push(root);
+        vector<vector<int>>ans(level);
+        int currLevel=level-1;
+         
+        while(q.size()!=0){                       
+            int size=q.size();
+            vector<int>ds;
+            
+            for(int i=0;i<size;i++){
+                
+                TreeNode* temp=q.front();
+                if(temp->left!=NULL) q.push(temp->left);
+                if(temp->right!=NULL) q.push(temp->right);
+                
+                ds.push_back(q.front()->val);
+                q.pop();
+            }
+            ans[currLevel]=ds;
+            currLevel--;            
+        }
         return ans;
     }
 };
